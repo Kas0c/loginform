@@ -25,7 +25,7 @@ class User {
                         'lastName' => $this->lastName,
                     );
     }
-    
+
     public function __unserialize(array $data) {
         $this->id = $data['id'];
         $this->login = $data['login'];
@@ -81,12 +81,22 @@ class User {
     public function getName() : string {
         return $this->firstName . " " . $this->lastName;
     }
+
     public function save() : bool {
         $query = "UPDATE user SET firstName = ?, lastName = ?
                                                 WHERE id = ?";
         $preparedQuery = $this->db->prepare($query);
         $preparedQuery->bind_param("ssi", $this->firstName,
                                     $this->lastName, $this->id);
+        return $preparedQuery->execute();
+    }
+
+    public function changePassword(string $newPassword) : bool {
+        $newPassword = password_hash($newPassword, PASSWORD_ARGON2I);
+        $query = "UPDATE user SET password = ? WHERE id = ?";
+        $preparedQuery = $this->db->prepare($query);
+        $preparedQuery->bind_param("si", $newPassword,
+                                        $this->id);
         return $preparedQuery->execute();
     }
 }

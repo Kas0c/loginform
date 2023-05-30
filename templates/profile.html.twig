@@ -8,6 +8,13 @@
             <input type="text" name="lastName" id="lastNameID" value="{{lastName}}"><br>
             <input type="submit" value="Zapisz">
         </form>
+        <form action="" method="post">
+            <label for="passwordID">Nowe hasło:</label><br>
+            <input type="password" name="password" id="passwordID"><br>
+            <label for="passwordRepeatID">Potwierdź nowe hasło:</label><br>
+            <input type="password" name="passwordRepeat" id="passwordRepeatID"><br>
+            <input type="submit" value="Zmień hasło">
+        </form>
         <a href="/loginform/logout/">Wyloguj</a>
     {% endif %}
 {% include 'footer.html.twig' %}
