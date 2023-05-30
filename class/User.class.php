@@ -13,7 +13,7 @@ class User {
         $this->lastName = "";
     }
 
-    public function register() {
+    public function register() : bool {
         $passwordHash = password_hash($this->password, PASSWORD_ARGON2I);
         $query = "INSERT INTO user VALUES (NULL, ?, ?, ?, ?)";
         $db = new mysqli('localhost', 'root', '', 'loginform');
@@ -22,10 +22,11 @@ class User {
                                             $passwordHash, 
                                             $this->firstName, 
                                             $this->lastName);
-        $preparedQuery->execute();
+        $result = $preparedQuery->execute();
+        return $result;
     }
 
-    public function login() {
+    public function login() : bool {
         $query = "SELECT * FROM user WHERE login = ?";
         $db = new mysqli('localhost', 'root', '', 'loginform');
         $preparedQuery = $db->prepare($query);
@@ -39,14 +40,12 @@ class User {
                 $this->id = $row['id'];
                 $this->firstName = $row['firstName'];
                 $this->lastName = $row['lastName'];
-                echo "zalogowano poprawnie";
+                return true;
             } else {
-                echo "Błędne login lub hasło";
+                return false;
             }
         } else {
-            //brak zgadzających się wyników - wyjście z funkcji
-            echo "Błędne login lub hasło";
-            return;
+            return false;
         }
     }
 }
