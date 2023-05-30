@@ -16,6 +16,26 @@ class User {
         $this->db = &$db;
     }
 
+    public function __serialize() : array {
+        return array(   
+                        'id' => $this->id,
+                        'login' => $this->login,
+                        'password' => $this->password,
+                        'firstName' => $this->firstName,
+                        'lastName' => $this->lastName,
+                    );
+    }
+    
+    public function __unserialize(array $data) {
+        $this->id = $data['id'];
+        $this->login = $data['login'];
+        $this->password = $data['password'];
+        $this->firstName = $data['firstName'];
+        $this->lastName = $data['lastName'];
+        global $db;
+        $this->db = &$db;
+    } 
+
     public function register() : bool {
         $passwordHash = password_hash($this->password, PASSWORD_ARGON2I);
         $query = "INSERT INTO user VALUES (NULL, ?, ?, ?, ?)";
@@ -60,6 +80,14 @@ class User {
 
     public function getName() : string {
         return $this->firstName . " " . $this->lastName;
+    }
+    public function save() : bool {
+        $query = "UPDATE user SET firstName = ?, lastName = ?
+                                                WHERE id = ?";
+        $preparedQuery = $this->db->prepare($query);
+        $preparedQuery->bind_param("ssi", $this->firstName,
+                                    $this->lastName, $this->id);
+        return $preparedQuery->execute();
     }
 }
 ?>

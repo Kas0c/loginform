@@ -1,0 +1,13 @@
+{% include 'header.html.twig' %}
+    {% if user is defined %}
+        Jesteś zalogowany jako: {{user.getName()}} 
+        <form action="" method="post">
+            <label for="firstNameID">Imię:</label><br>
+            <input type="text" name="firstName" id="firstNameID" value="{{firstName}}"><br>
+            <label for="lastNameID">Nazwisko:</label><br>
+            <input type="text" name="lastName" id="lastNameID" value="{{lastName}}"><br>
+            <input type="submit" value="Zapisz">
+        </form>
+        <a href="/loginform/logout/">Wyloguj</a>
+    {% endif %}
+{% include 'footer.html.twig' %}

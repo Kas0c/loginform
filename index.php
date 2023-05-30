@@ -74,6 +74,31 @@ Route::add('/register', function() {
     }
 }, 'post');
 
+Route::add('/profile', function() {
+    global $twig;
+    $user = $_SESSION['user'];
+    //pobiera imię i nazwisko
+    $fullName = $user->getName();
+    $fullName = explode(" ", $fullName);
+    $v = array( 'user' => $user,
+                'firstName' => $fullName[0],
+                'lastName' => $fullName[1],
+                );
+    $twig->display('profile.html.twig', $v);
+});
+
+Route::add('/profile', function() {
+    global $twig;
+    if(isset($_REQUEST['firstName']) && isset($_REQUEST['lastName'])) {
+        $user = $_SESSION['user'];
+        $user->setFirstName($_REQUEST['firstName']);
+        $user->setLastName($_REQUEST['lastName']);
+        $user->save();
+        $twig->display('message.html.twig',
+                        ['message' => "Zmiany w profilu zostały zapisane"]);
+    }
+}, 'post');
+
 Route::add('/logout', function() {
     global $twig;
     session_destroy();
