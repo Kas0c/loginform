@@ -1,5 +1,6 @@
 <?php
 class User {
+    private mysqli $db;
     private int $id;
     private string $login;
     private string $password;
@@ -11,13 +12,14 @@ class User {
         $this->password = $password;
         $this->firstName = "";
         $this->lastName = "";
+        global $db;
+        $this->db = &$db;
     }
 
     public function register() : bool {
         $passwordHash = password_hash($this->password, PASSWORD_ARGON2I);
         $query = "INSERT INTO user VALUES (NULL, ?, ?, ?, ?)";
-        $db = new mysqli('localhost', 'root', '', 'loginform');
-        $preparedQuery = $db->prepare($query);
+        $preparedQuery = $this->db->prepare($query);
         $preparedQuery->bind_param('ssss', $this->login, 
                                             $passwordHash, 
                                             $this->firstName, 
@@ -28,8 +30,7 @@ class User {
 
     public function login() : bool {
         $query = "SELECT * FROM user WHERE login = ?";
-        $db = new mysqli('localhost', 'root', '', 'loginform');
-        $preparedQuery = $db->prepare($query);
+        $preparedQuery = $this->db->prepare($query);
         $preparedQuery->bind_param('s', $this->login);
         $preparedQuery->execute();
         $result = $preparedQuery->get_result();
